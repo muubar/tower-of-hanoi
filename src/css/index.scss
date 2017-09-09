@@ -1,5 +1,11 @@
-body {
-  h1 {
-    color: purple;
-  }
+@import "normalize.css";
+.container {
+  width: 90%;
+  margin: 0 auto;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid gray;
 }
