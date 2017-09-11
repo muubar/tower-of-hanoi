@@ -85,36 +85,79 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     var container = (0, _jquery2.default)(".container");
     var background = new Image();
     background.src = "src/background.png";
+    var rings = ringsGenerator(2); //watch rings input
+
     render();
-    //animate('x', 0, 1000);
+    animate(rings[0], "y", 50, 500);
+    animate(rings[0], "x", 230, 500);
+  }
+
+  function ringsGenerator() {
+    var num = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5;
+
+    var arr = [];
+    var y = 265;
+    for (var i = 1; i <= num; i++) {
+      var obj = {};
+      var img = new Image();
+      img.src = "src/" + i + ".png";
+      obj.image = img;
+      obj.x = 70;
+      obj.y = y;
+      y -= 15;
+      arr.push(obj);
+    }
+    return arr;
   }
 
   function render() {
+    //height of each ring 16,height of base 265, bars are 70, 230 and 390
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0);
-    //context.rect(square.x, square.y, square.width, square.height);
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = rings[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var ring = _step.value;
+
+        ctx.drawImage(ring.image, ring.x, ring.y);
+      }
+      //context.rect(square.x, square.y, square.width, square.height);
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
     requestAnimationFrame(render);
   };
 
   //http://codular.com/animation-with-html5-canvas
-  /*function animate(obj, prop, val, duration) {
-    // The calculations required for the step function
+  function animate(obj, prop, val, duration) {
     var start = new Date().getTime();
     var end = start + duration;
     var current = obj[prop];
     var distance = val - current;
-      var step = function () {
-      // Get our current progres
+
+    var step = function step() {
       var timestamp = new Date().getTime();
       var progress = Math.min((duration - (end - timestamp)) / duration, 1);
-        // Update the square's property
-      obj[prop] = current + (distance * progress);
-        // If the animation hasn't finished, repeat the step.
+      obj[prop] = current + distance * progress;
       if (progress < 1) requestAnimationFrame(step);
     };
-      // Start the animation
     return step();
-  };*/
+  };
 });
 
 /***/ }),
