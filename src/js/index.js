@@ -12,7 +12,7 @@ $(document).ready(function () {
 
     render();
     animate(rings[0], "y", 50, 500);
-    animate(rings[0], "x", 230, 500);
+    //animate(rings[0], "x", 230, 500); //implement all animations in a single function
   }
 
 
@@ -42,7 +42,7 @@ $(document).ready(function () {
     //context.rect(square.x, square.y, square.width, square.height);
     requestAnimationFrame(render);
   };
-
+  var k = 0;
   //http://codular.com/animation-with-html5-canvas
   function animate(obj, prop, val, duration) {
     var start = new Date().getTime();
@@ -55,6 +55,11 @@ $(document).ready(function () {
       var progress = Math.min((duration - (end - timestamp)) / duration, 1);
       obj[prop] = current + (distance * progress);
       if (progress < 1) requestAnimationFrame(step);
+      else if (k === 0) {
+        //implement multi-step animation in the same function
+        k++;
+        animate(rings[0], "x", 230, 500)
+      };
     };
     return step();
   };
