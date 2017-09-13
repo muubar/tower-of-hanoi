@@ -11,7 +11,19 @@
 
 <body>
   <div class="container">
-    <canvas width="600" height="300" id="canvas">your browser is out-of-date.</canvas>
+    <div class="main">
+      <h1>Towers of Hanoi</h1>
+      <div class="controls">
+        <label for="discs">Discs:</label>
+        <input type="text" value="5" id="discs" disabled>
+        <button type="button" class="bttn-material-flat bttn-md" id="up">&uarr;</button>
+        <button type="button" class=" bttn-material-flat bttn-md" id="down">&darr;</button>
+        <button type="button" class="bttn-material-flat bttn-md start-button">Start</button>
+        <span>Moves:</span>
+        <span id="moves">0</span>
+      </div>
+      <canvas width="600" height="300" id="canvas"></canvas>
+    </div>
   </div>
 </body>
 

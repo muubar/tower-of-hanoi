@@ -8,10 +8,11 @@ $(document).ready(function () {
     var container = $(".container");
     var background = new Image();
     background.src = "src/background.png";
-    var rings = ringsGenerator(2); //watch rings input
-
+    var rings = ringsGenerator(); //watch rings input
+    $("#up").click(addDisc);
+    $("#down").click(removeDisc);
     render();
-    animate(rings[0], "y", 50, 500);
+    //animate(rings[0], "y", 50, 500);
     //animate(rings[0], "x", 230, 500); //implement all animations in a single function
   }
 
@@ -30,6 +31,24 @@ $(document).ready(function () {
       arr.push(obj);
     }
     return arr;
+  }
+
+  function addDisc() {
+    var currentNum = parseInt($("#discs").attr("value"));
+    if (currentNum + 1 >= 5 && currentNum + 1 <= 10) {
+      $("#discs").attr("value", currentNum + 1);
+      rings = ringsGenerator(currentNum + 1);
+      render();
+    }
+  }
+
+  function removeDisc() {
+    var currentNum = parseInt($("#discs").attr("value"));
+    if (currentNum - 1 >= 5 && currentNum - 1 <= 10) {
+      $("#discs").attr("value", currentNum - 1);
+      rings = ringsGenerator(currentNum - 1);
+      render();
+    }
   }
 
   function render() {

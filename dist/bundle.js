@@ -85,10 +85,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     var container = (0, _jquery2.default)(".container");
     var background = new Image();
     background.src = "src/background.png";
-    var rings = ringsGenerator(2); //watch rings input
-
+    var rings = ringsGenerator(); //watch rings input
+    (0, _jquery2.default)("#up").click(addDisc);
+    (0, _jquery2.default)("#down").click(removeDisc);
     render();
-    animate(rings[0], "y", 50, 500);
+    //animate(rings[0], "y", 50, 500);
     //animate(rings[0], "x", 230, 500); //implement all animations in a single function
   }
 
@@ -108,6 +109,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       arr.push(obj);
     }
     return arr;
+  }
+
+  function addDisc() {
+    var currentNum = parseInt((0, _jquery2.default)("#discs").attr("value"));
+    if (currentNum + 1 >= 5 && currentNum + 1 <= 10) {
+      (0, _jquery2.default)("#discs").attr("value", currentNum + 1);
+      rings = ringsGenerator(currentNum + 1);
+      render();
+    }
+  }
+
+  function removeDisc() {
+    var currentNum = parseInt((0, _jquery2.default)("#discs").attr("value"));
+    if (currentNum - 1 >= 5 && currentNum - 1 <= 10) {
+      (0, _jquery2.default)("#discs").attr("value", currentNum - 1);
+      rings = ringsGenerator(currentNum - 1);
+      render();
+    }
   }
 
   function render() {
