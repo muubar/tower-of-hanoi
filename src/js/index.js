@@ -8,24 +8,34 @@ $(document).ready(function () {
     var container = $(".container");
     var background = new Image();
     background.src = "src/background.png";
-    var currBarsHeight = [265, 265, 265]; //initialize me on start
-    var currBars = [[], [], []]; //initialize me on start
+    var currBarsHeight = [265, 265, 265];
+    var currBars = [[], [], []];
     var rings = ringsGenerator();
     $("#up").click(addDisc);
     $("#down").click(removeDisc);
+    var AnimActive = false;
     render();
     $(".start-button").click(function () {
-      var test = [[1, 3], [1, 2], [2, 1], ];
-      testy();
+      var txt = $(".start-button").text() === "start" ? "reset" : "start";
+      $(".start-button").text(txt);
 
-      function testy() {
-        if (test.length > 0) {
-          moveDisc(test[0][0], test[0][1]);
-          test.shift();
-          wait(1000).then(function () {
-            return testy();
-          });
+      if (txt === "reset") {
+        AnimActive = true;
+        var test = [[1, 3], [1, 2], [2, 1], [3, 2], [1, 3], [1, 3], [3, 2], [2, 3], [2, 1]];
+        startSolution();
+
+        function startSolution() {
+          if (test.length > 0 && AnimActive) {
+            moveDisc(test[0][0], test[0][1]);
+            test.shift();
+            wait(1000).then(function () {
+              return startSolution();
+            });
+          }
         }
+      } else {
+        AnimActive = false;
+        reset();
       }
     });
 
@@ -50,20 +60,32 @@ $(document).ready(function () {
     }
 
     function addDisc() {
-      var currentNum = parseInt($("#discs").attr("value"));
-      if (currentNum + 1 >= 5 && currentNum + 1 <= 10) {
-        $("#discs").attr("value", currentNum + 1);
-        rings = ringsGenerator(currentNum + 1);
-        render();
+      if (!AnimActive) {
+        var currentNum = parseInt($("#discs").attr("value"));
+        if (currentNum + 1 >= 5 && currentNum + 1 <= 10) {
+          $("#discs").attr("value", currentNum + 1);
+          rings = ringsGenerator(currentNum + 1);
+          render();
+        }
+      } else {
+        AnimActive = false;
+        reset();
+        addDisc();
       }
     }
 
     function removeDisc() {
-      var currentNum = parseInt($("#discs").attr("value"));
-      if (currentNum - 1 >= 5 && currentNum - 1 <= 10) {
-        $("#discs").attr("value", currentNum - 1);
-        rings = ringsGenerator(currentNum - 1);
-        render();
+      if (!AnimActive) {
+        var currentNum = parseInt($("#discs").attr("value"));
+        if (currentNum - 1 >= 5 && currentNum - 1 <= 10) {
+          $("#discs").attr("value", currentNum - 1);
+          rings = ringsGenerator(currentNum - 1);
+          render();
+        }
+      } else {
+        AnimActive = false;
+        reset();
+        removeDisc();
       }
     }
 
@@ -84,9 +106,10 @@ $(document).ready(function () {
 
         function step() {
           var timestamp = new Date().getTime();
-          var progress = Math.min(((duration - (end - timestamp)) / duration), 1);
+          var progress = Math.min(((duration - (end - timestamp)) / duration), 1.01);
           obj[prop] = current + (distance * progress);
-          if (progress < 1) requestAnimationFrame(step);
+          console.log(progress + "  " + obj[prop])
+          if (progress < 1.01) requestAnimationFrame(step);
           else if (animationStage === 0) {
             animationStage++;
             animate(fromArr[fromArr.length - 1], "x", barsLocations[to - 1], 250);
@@ -106,7 +129,7 @@ $(document).ready(function () {
         currBarsHeight[to - 1] -= 16;
         toArr.push(fromArr[fromArr.length - 1]);
         fromArr.pop();
-        $("#moves").text(parseInt($("#moves").text()) + 1);
+        if (AnimActive) $("#moves").text(parseInt($("#moves").text()) + 1);
       }
     }
 
@@ -126,5 +149,18 @@ $(document).ready(function () {
       //context.rect(square.x, square.y, square.width, square.height);
       requestAnimationFrame(render);
     };
+
+    function reset() {
+      wait(100).then(function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        currBarsHeight = [265, 265, 265];
+        currBars = [[], [], []];
+        rings = ringsGenerator(parseInt($("#discs").attr("value")))
+        $("#moves").text(0);
+        $(".start-button").text("start");
+        return render();
+      });
+
+    }
   };
 });
