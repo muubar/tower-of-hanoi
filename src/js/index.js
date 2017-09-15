@@ -15,13 +15,25 @@ $(document).ready(function () {
     $("#down").click(removeDisc);
     render();
     $(".start-button").click(function () {
-      //moveDisc(1, 3);   turn to sync using promises or generators
-      //moveDisc(1, 2);
+      var test = [[1, 3], [1, 2], [2, 1], ];
+      testy();
+
+      function testy() {
+        if (test.length > 0) {
+          moveDisc(test[0][0], test[0][1]);
+          test.shift();
+          wait(1000).then(function () {
+            return testy();
+          });
+        }
+      }
     });
 
     function ringsGenerator(num = 5) {
       var arr = [];
       var y = 265;
+      currBars[0] = [];
+      currBarsHeight[0] = 265;
       for (let i = 1; i <= num; i++) {
         var obj = {};
         var img = new Image();
@@ -32,8 +44,8 @@ $(document).ready(function () {
         y -= 15;
         arr.push(obj);
         currBars[0].push(obj);
+        currBarsHeight[0] -= 16;
       }
-      currBarsHeight[0] += num * 16;
       return arr;
     }
 
@@ -61,7 +73,7 @@ $(document).ready(function () {
       var barsLocations = [70, 230, 390];
       var fromArr = currBars[from - 1];
       var toArr = currBars[to - 1];
-      animate(fromArr[fromArr.length - 1], "y", 50, 500);
+      animate(fromArr[fromArr.length - 1], "y", 50, 250);
 
       //http://codular.com/animation-with-html5-canvas
       function animate(obj, prop, val, duration) {
@@ -70,26 +82,38 @@ $(document).ready(function () {
         var current = obj[prop];
         var distance = val - current;
 
-        var step = function () {
+        function step() {
           var timestamp = new Date().getTime();
-          var progress = Math.min((duration - (end - timestamp)) / duration, 1);
+          var progress = Math.min(((duration - (end - timestamp)) / duration), 1);
           obj[prop] = current + (distance * progress);
           if (progress < 1) requestAnimationFrame(step);
           else if (animationStage === 0) {
             animationStage++;
-            animate(fromArr[fromArr.length - 1], "x", barsLocations[to - 1], 500);
+            animate(fromArr[fromArr.length - 1], "x", barsLocations[to - 1], 250);
           } else if (animationStage === 1) {
             animationStage++;
-            animate(fromArr[fromArr.length - 1], "y", currBarsHeight[to - 1], 500);
-          };
+            animate(fromArr[fromArr.length - 1], "y", currBarsHeight[to - 1], 250);
+          } else if (animationStage === 2) {
+            animationStage++;
+            updateBars();
+          }
         };
-        return step();
+        step();
       };
-      currBarsHeight[from - 1] -= 16;
-      currBarsHeight[to - 1] += 16;
-      currBars[to - 1] = toArr.push(fromArr[fromArr.length - 1]);
-      fromArr.pop();
-      $("#moves").text(parseInt($("#moves").text()) + 1);
+
+      function updateBars() {
+        currBarsHeight[from - 1] += 16;
+        currBarsHeight[to - 1] -= 16;
+        toArr.push(fromArr[fromArr.length - 1]);
+        fromArr.pop();
+        $("#moves").text(parseInt($("#moves").text()) + 1);
+      }
+    }
+
+    function wait(t) {
+      return new Promise(function (resolve) {
+        window.setTimeout(resolve, t)
+      });
     }
 
     function render() {
