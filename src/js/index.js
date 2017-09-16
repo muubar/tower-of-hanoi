@@ -7,7 +7,9 @@ $(document).ready(function () {
   if (ctx) {
     var container = $(".container");
     var background = new Image();
+    var sprite = new Image();
     background.src = "src/background.png";
+    sprite.src = "src/sprite.png";
     var currBarsHeight = [265, 265, 265];
     var currBars = [[], [], []];
     var rings = ringsGenerator();
@@ -31,18 +33,18 @@ $(document).ready(function () {
     var arr = [];
     var y = 265;
     var size = num;
+    var sx = 0;
     currBars[0] = [];
     currBarsHeight[0] = 265;
     for (let i = 1; i <= num; i++) {
       var obj = {};
-      var img = new Image();
-      img.src = "src/" + i + ".png";
-      obj.image = img;
       obj.x = 70;
       obj.y = y;
+      obj.sx = sx;
       obj.size = size;
       y -= 15;
       size--;
+      sx += 142;
       arr.push(obj);
       currBars[0].push(obj);
       currBarsHeight[0] -= 16;
@@ -136,7 +138,7 @@ $(document).ready(function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0);
     for (var ring of rings) {
-      ctx.drawImage(ring.image, ring.x, ring.y);
+      ctx.drawImage(sprite, ring.sx, 0, 142, 18, ring.x, ring.y, 142, 18);
     }
     requestAnimationFrame(render);
   };
